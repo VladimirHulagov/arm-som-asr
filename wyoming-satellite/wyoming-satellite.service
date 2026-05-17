@@ -1,0 +1,25 @@
+[Unit]
+Description=Wyoming Satellite for HA Intercom
+After=network.target sound.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/opt/wyoming-venv/bin/python3 -m wyoming_satellite \
+    --uri tcp://0.0.0.0:10700 \
+    --mic-command "arecord -D plughw:1,0 -f S16_LE -r 16000 -c 1 -t raw" \
+    --mic-command-rate 16000 \
+    --mic-command-width 2 \
+    --mic-command-channels 1 \
+    --snd-command "aplay -D plughw:1,0 -f S16_LE -r 22050 -c 1 -t raw" \
+    --snd-command-rate 22050 \
+    --snd-command-width 2 \
+    --snd-command-channels 1 \
+    --name "Khadas Intercom" \
+    --area "Hall" \
+    --debug
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
